@@ -858,7 +858,7 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 			newColor[2] *= bgra[0] / 255.f;
 			newColor[3] *= bgra[3] / 255.f;
 			glVertexAttrib4fv(2, newColor);
-			setAddColor(part.addColor[2] / 255.f, part.addColor[1] / 255.f, part.addColor[0] / 255.f);
+			setAddColor(newColor[2], newColor[1], newColor[0]);
 
 
 

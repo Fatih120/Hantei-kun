@@ -834,7 +834,7 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 			view = glm::scale(view, glm::vec3(scale[0], scale[1], 1.f));
 
 			setMatrix(view);
-			if (screenShot || outputAnimElement)
+			if (outputAnimElement)
 				glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE);
 			else if (part.additive)
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -858,7 +858,7 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 			newColor[2] *= bgra[0] / 255.f;
 			newColor[3] *= bgra[3] / 255.f;
 			glVertexAttrib4fv(2, newColor);
-			setAddColor(newColor[2], newColor[1], newColor[0]);
+			setAddColor(part.addColor[2] / 255.f, part.addColor[1] / 255.f, part.addColor[0] / 255.f);
 
 
 

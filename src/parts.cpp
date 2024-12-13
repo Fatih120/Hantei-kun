@@ -764,9 +764,10 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 			glm::vec3 rotation = glm::vec3(part.rotation[0], part.rotation[1], part.rotation[2]);
 			glm::vec2 scale = glm::vec2(part.scaleX, part.scaleY);
 			glm::vec4 bgra = glm::vec4(part.bgra[0], part.bgra[1], part.bgra[2], part.bgra[3]);
-
+			glm::vec3 rgb = glm::vec3(part.addColor[0], part.addColor[1], part.addColor[2]);
+			
 			Shape currentShape = shapes[cutout.shapeIndex];
-
+			
 			Shape outShape{};
 			outShape.dRadius = currentShape.dRadius;
 			outShape.dz = currentShape.dz;
@@ -777,7 +778,7 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 			outShape.vertexCount = currentShape.vertexCount;
 			outShape.vertexCount2 = currentShape.vertexCount2;
 			outShape.width = currentShape.width;
-
+			
 			if (interpolationFactor < 1 && groups.count(nextPattern)) {
 				auto mix = [interpolationFactor](float a, float b) {
 					return a * interpolationFactor + b * (1 - interpolationFactor);
@@ -791,13 +792,13 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 					}
 					return mix(a, b);
 				};
-
+			
 				auto nextPart = std::find_if(groups[nextPattern].begin(), groups[nextPattern].end(), [&part](const auto& pt) {return pt.propId == part.propId; });
 				if (nextPart != groups[nextPattern].end()) {
 					if (cutOuts.count((*nextPart).ppId) != 0) {
 						auto nextCutout = cutOuts[(*nextPart).ppId];
 						Shape nextShape = shapes[nextCutout.shapeIndex];
-
+			
 						offset[0] = mix(offset[0], (*nextPart).x);
 						offset[1] = mix(offset[1], (*nextPart).y);
 						rotation[0] = mixRotation(rotation[0], (*nextPart).rotation[0]);
@@ -809,7 +810,10 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 						bgra[1] = mix(bgra[1], (*nextPart).bgra[1]);
 						bgra[2] = mix(bgra[2], (*nextPart).bgra[2]);
 						bgra[3] = mix(bgra[3], (*nextPart).bgra[3]);
-
+						rgb[0] = mix(rgb[0], (*nextPart).addColor[0]);
+						rgb[1] = mix(rgb[1], (*nextPart).addColor[1]);
+						rgb[2] = mix(rgb[2], (*nextPart).addColor[2]);
+			
 						if (currentShape.type > 2 && nextShape.type == currentShape.type) {
 							outShape.dRadius = mix(outShape.dRadius, nextShape.dRadius);
 							outShape.dz = mix(outShape.dz, nextShape.dz);
@@ -821,26 +825,27 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 					}
 				}
 			}
-
+			
 			glm::mat4 view = glm::mat4(1.f);
-
+			
 			view = glm::translate(view, glm::vec3(offset[0], offset[1], 0.f));
 			view = glm::rotate(view, -rotation[1] * tau, glm::vec3(0.0, 1.f, 0.f));
 			view = glm::rotate(view, -rotation[0] * tau, glm::vec3(1.0, 0.f, 0.f));
 			view = glm::rotate(view, rotation[2] * tau, glm::vec3(0.0, 0.f, 1.f));
-
+			
 			setFlip(part.flip);
-
+			
 			view = glm::scale(view, glm::vec3(scale[0], scale[1], 1.f));
-
+			
 			setMatrix(view);
-			if (outputAnimElement)
-				glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE);
-			else if (part.additive)
+			/* if (outputAnimElement)
+				glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE); 
+			else */
+			if (part.additive)
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			else
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+			
 			float newColor[4];
 			memcpy(newColor, color, sizeof(float) * 4);
 			if (cutout.colorSlot != 0) {
@@ -851,14 +856,14 @@ void Parts::Draw(int pattern, int nextPattern, float interpolationFactor,
 					newColor[2] *= ((color >> 16) & 0xFF) / 255.f;
 					newColor[3] *= (color >> 24) / 255.f;
 				}
-
+			
 			}
 			newColor[0] *= bgra[2] / 255.f;
 			newColor[1] *= bgra[1] / 255.f;
 			newColor[2] *= bgra[0] / 255.f;
 			newColor[3] *= bgra[3] / 255.f;
 			glVertexAttrib4fv(2, newColor);
-			setAddColor(part.addColor[2] / 255.f, part.addColor[1] / 255.f, part.addColor[0] / 255.f);
+			setAddColor(rgb[2] / 255.f, rgb[1] / 255.f, rgb[0] / 255.f);
 
 
 

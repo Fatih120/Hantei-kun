@@ -1,8 +1,8 @@
 
 [submodule "glm"]
-	path = glm
+	path = glm2
 	url = https://github.com/g-truc/glm
 [submodule "imgui"]
-	path = imgui
+	path = imgui2
 	url = https://github.com/ocornut/imgui
 

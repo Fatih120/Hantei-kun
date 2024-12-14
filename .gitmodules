@@ -1,5 +1,5 @@
 [submodule "glm"]
-	path = imgui
+	path = glm
 	url = https://github.com/g-truc/glm.git
 [submodule "imgui"]
 	path = imgui

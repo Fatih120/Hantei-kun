@@ -4,6 +4,7 @@
 #include "filedialog.h"
 #include "ini.h"
 
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <filesystem>
@@ -105,7 +106,8 @@ void MainFrame::DrawBack()
 		for(int i = 0; i<clientRect.x*clientRect.y*4; i+=4) //Fix bad transparency issue.
 		{
 			auto& alpha = imageData[i+3];
-			auto alphaFactor = pow((double)alpha/255.0, 1.0/2.1);
+			auto fixAlpha = std::clamp(sqrtf((float)alpha / 256.0) * 256.f, 0.f, 256.f);
+			auto alphaFactor = (double)fixAlpha / 256.0;
 			if(alphaFactor > 0)
 			{
 				float rgb[3];

@@ -108,6 +108,7 @@ void MainFrame::DrawBack()
 			auto& alpha = imageData[i+3];
 			auto fixAlpha = std::clamp(sqrtf((float)alpha / 256.0) * 256.f, 0.f, 256.f);
 			auto alphaFactor = (double)fixAlpha / 256.0;
+			imageData[i + 3] = (int)fixAlpha;
 			if(alphaFactor > 0)
 			{
 				float rgb[3];

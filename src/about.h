@@ -8,6 +8,10 @@
 #define HA6GUIVERSION " custom"
 #endif
 
+#ifndef GIT_COMMIT_HASH
+#define GIT_COMMIT_HASH "?"
+#endif
+
 //This is the main pane on the left
 class AboutWindow 
 {
@@ -29,6 +33,8 @@ public:
 			ImGui::Text("Special thanks to:\nEiton for the effect rendering code\nu4ick and Rhekar for advice and reporting bugs.");
 			ImGui::Separator();
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Separator();
+			ImGui::Text("Built: %s %s (%s)", __DATE__, __TIME__, GIT_COMMIT_HASH);
 			ImGui::End();
 			ImGui::PopStyleColor(2);
 		}

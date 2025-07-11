@@ -10,6 +10,13 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
 set (EXE "hanteichan24" )
 
+execute_process(
+  COMMAND git rev-parse --short HEAD
+  OUTPUT_VARIABLE GIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+add_definitions(-DGIT_COMMIT_HASH="${GIT_HASH}")
+
 include(glad)
 include(imgui)
 add_subdirectory(glm)

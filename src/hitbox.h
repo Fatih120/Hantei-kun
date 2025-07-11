@@ -13,9 +13,9 @@ class BoxList_T : public std::map<int, Hitbox, std::less<int>, Allocator<std::pa
 public:
 	template<template<typename> class FromT>
 	BoxList_T<Allocator>& operator=(const BoxList_T<FromT>& from) {
-		clear();
+		this->clear();
 		for(auto it = from.begin(); it != from.end(); it++)
-			operator[](it->first) = it->second;
+			this->operator[](it->first) = it->second;
 		return *this;
 	}
 };

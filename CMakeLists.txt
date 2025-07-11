@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13...3.19)
-project(hanteichan VERSION 2.2.1 LANGUAGES C CXX)
+project(hanteichan VERSION 2.4 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,7 +8,7 @@ add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" )
-set (EXE "hanteichan" )
+set (EXE "hanteichan24" )
 
 include(glad)
 include(imgui)
@@ -42,7 +42,7 @@ add_executable(${EXE} WIN32
 )
 
 target_include_directories(${EXE} PRIVATE ".")
-target_compile_definitions(${EXE} PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN HA6GUIVERSION="${CMAKE_PROJECT_VERSION}_Custom_20241210")
+target_compile_definitions(${EXE} PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN HA6GUIVERSION="${CMAKE_PROJECT_VERSION}u")
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(${EXE} PRIVATE tinyalloc imgui glad OpenGL::GL glm winmm)

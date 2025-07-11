@@ -136,10 +136,13 @@ void BoxPane::Draw()
 			boxes[currentBox] = currState.copied->box;
 		}
 		
-
-		const int step = 8;
-		im::InputScalarN("Top left", ImGuiDataType_S32, boxes[currentBox].xy, 2, &step, NULL, "%d", 0);
-		im::InputScalarN("Bottom right", ImGuiDataType_S32, boxes[currentBox].xy+2, 2, &step, NULL, "%d", 0);
+		const int baseStep = 10;
+		const int ctrlStep = 20;
+		const int altStep = 2;
+		int step = ImGui::GetIO().KeyCtrl ? ctrlStep : (ImGui::GetIO().KeyAlt ? altStep : baseStep);
+		
+		im::InputScalarN("Top Left", ImGuiDataType_S32, boxes[currentBox].xy, 2, &step, NULL, "%d", 0);
+		im::InputScalarN("Bottom Right", ImGuiDataType_S32, boxes[currentBox].xy + 2, 2, &step, NULL, "%d", 0);
 	}
 
 

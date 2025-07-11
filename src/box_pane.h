@@ -16,6 +16,9 @@ public:
 
 	void AdvanceBox(int dir);
 
+public:
+    int GetCurrentBox() const { return currentBox; }
+
 private:
 	std::string boxNameList[33];
 	int currentBox;

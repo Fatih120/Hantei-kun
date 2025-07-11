@@ -7,7 +7,7 @@
 extern struct Settings
 {
 	//default
-	float color[3]{0.324f, 0.409f, 0.185f};
+	float color[3]{0.202f, 0.243f, 0.293f};
 	int zoomLevel = 1;
 	bool bilinear = 0;
 	int theme = 0;
@@ -16,7 +16,7 @@ extern struct Settings
 	short posY = 100;
 	short winSizeX = 1280;
 	short winSizeY = 800;
-	bool maximized = false;
+	bool maximized = true;
 	bool idleUpdate = true;
 } gSettings;
 

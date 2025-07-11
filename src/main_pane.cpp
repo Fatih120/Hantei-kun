@@ -87,7 +87,7 @@ void MainPane::Draw()
 			else
 			{
 				im::Text("This pattern has no frames.");
-				if(im::Button("Add frame"))
+				if(im::Button("Add Frame"))
 				{
 					seq->frames.push_back({});
 					seq->frames.back().AF.layers.resize(3);
@@ -96,29 +96,29 @@ void MainPane::Draw()
 			}
 
 			im::BeginChild("FrameInfo", {0, im::GetWindowSize().y-im::GetFrameHeight()*4-8}, false, ImGuiWindowFlags_HorizontalScrollbar);
-			if (im::TreeNode("Pattern data"))
+			if (im::TreeNode("Pattern Data"))
 			{
 				if(PatternDisplay(seq))
 				{
 					decoratedNames[currState.pattern] = frameData->GetDecoratedName(currState.pattern);
 				}
 
-				if(im::Button("Copy pattern")){
+				if(im::Button("Copy Pattern")){
 					currState.copied->pattern = *seq;
 				}
 				im::SameLine(0,20.f); 
-				if(im::Button("Paste pattern")){
+				if(im::Button("Paste Pattern")){
 					*seq = currState.copied->pattern;
 					decoratedNames[currState.pattern] = frameData->GetDecoratedName(currState.pattern);
 					nframes = seq->frames.size() - 1;
 				}
 
-				if(im::Button("Push pattern copy"))
+				if(im::Button("Push Pattern"))
 				{
 					patCopyStack.push_back(SequenceWId{currState.pattern, *seq});
 				}
 				im::SameLine(0,20.f);
-				if(im::Button("Pop all and paste"))
+				if(im::Button("Pop Patterns"))
 				{
 					PopCopies();
 					RegenerateNames();
@@ -126,7 +126,11 @@ void MainPane::Draw()
 				}
 				im::SameLine(0,20.f);
 				im::Text("%llu copies", patCopyStack.size());
-
+				
+				im::SameLine(); im::TextDisabled("(?)");
+				if(im::IsItemHovered())
+					Tooltip("Copies and pastes patterns to a stack/queue.\nLets you copy patterns by their IDs, then paste multiple patterns back over those copied IDs.\nUsed for copying patterns across several HA6 files into one.");
+				
 				im::TreePop();
 				im::Separator();
 			}
@@ -135,7 +139,7 @@ void MainPane::Draw()
 				if(currState.frame > nframes)
 					currState.frame = nframes;
 				Frame &frame = seq->frames[currState.frame];
-				if(im::TreeNode("State data"))
+				if(im::TreeNode("State Data"))
 				{
 					AsDisplay(&frame.AS);
 					if(im::Button("Copy AS")){
@@ -149,7 +153,7 @@ void MainPane::Draw()
 					im::TreePop();
 					im::Separator();
 				}
-				if (im::TreeNode("Animation data"))
+				if (im::TreeNode("Animation Data"))
 				{
 					AfDisplay(&frame.AF, currState.selectedLayer);
 					if(im::Button("Copy AF")){

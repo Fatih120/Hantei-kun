@@ -12,3 +12,7 @@
 /cerr.txt
 /cout.txt
 hanteichan.log
+CMakeCache.txt
+CMakeFiles/4.0.2/CMakeSystem.cmake
+CMakeFiles/cmake.check_cache
+CMakeFiles/CMakeConfigureLog.yaml

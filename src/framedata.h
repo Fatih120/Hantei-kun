@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 #include "hitbox.h"
 
@@ -202,7 +203,7 @@ struct Frame_T {
 template<typename Type, typename A, typename B>
 void CopyVectorContents(A& dst, const B& src)
 {
-	static_assert(sizeof(A::value_type) == sizeof(Type) && sizeof(B::value_type) == sizeof(Type), "Vector element types don't match");
+	static_assert(sizeof(typename A::value_type) == sizeof(Type) && sizeof(typename B::value_type) == sizeof(Type), "Vector element types don't match");
 	dst.resize(src.size());
 	memcpy(dst.data(), src.data(), sizeof(Type)*src.size()); 
 }

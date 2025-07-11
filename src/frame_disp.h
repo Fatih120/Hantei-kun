@@ -93,24 +93,24 @@ inline void AsDisplay(Frame_AS *as)
 
 	const char* const cancelList[] = {
 		"Never",
-		"On hit",
+		"On Hit",
 		"Always",
-		"On successful hit"
+		"On Successful Hit"
 	};
 
 	const char* const counterList[] = {
-		"No change",
-		"High counter",
-		"Low counter",
+		"No Change",
+		"High Counter",
+		"Low Counter",
 		"Clear"
 	};
 
 	const char* const invulList[] = {
 		"None",
-		"High and mid",
-		"Low and mid",
-		"All but throw",
-		"Throw only",
+		"High and Mid",
+		"Low and Mid",
+		"All but Throw",
+		"Throw Only",
 		"Unknown"
 	};
 
@@ -140,11 +140,7 @@ inline void AsDisplay(Frame_AS *as)
 		case 0: Tooltip("Vector influences other animations (dash momentum)"); break;
 		case 1: Tooltip("Force clean vector (kill dash momentum)"); break;
 		case 2: Tooltip("Don't transition to walking"); break;
-		case 4: Tooltip("Can ground tech"); break;
-		case 5: Tooltip("Unknown 5"); break;
-		case 8: Tooltip("Unknown 8"); break;
-		case 9: Tooltip("Unknown 9"); break;
-		case 12: Tooltip("Unknown 12"); break;
+		case 4: Tooltip("Can Ground Tech"); break;
 		case 31: Tooltip("Vector initialization only at the beginning (?)"); break;
 	}
 	
@@ -152,26 +148,25 @@ inline void AsDisplay(Frame_AS *as)
 	BitField("Flagset 2", &as->statusFlags[1], &flagIndex);
 	switch (flagIndex)
 	{
-		case 0: Tooltip("Can always EX cancel"); break;
-		case 2: Tooltip("Can only jump cancel"); break;
-		case 31: Tooltip("Can't block"); break;
+		case 0: Tooltip("Can Always EX Cancel"); break;
+		case 31: Tooltip("Can't Block"); break;
 	}
 
 	im::SetNextItemWidth(width);
-	im::InputInt("Number of hits", &as->hitsNumber, 0, 0); im::SameLine(0,20.f);
+	im::InputInt("Hits # Times", &as->hitsNumber, 0, 0); im::SameLine(0,20.f);
 	im::SetNextItemWidth(width);
 	im::InputInt("ASCF", &as->ascf, 0, 0);
-	im::Checkbox("Player can move", &as->canMove); //
+	im::Checkbox("Able to Move", &as->canMove); //
 	im::Combo("State", &as->stanceState, stateList, IM_ARRAYSIZE(stateList));
 	im::Combo("Invincibility", &as->invincibility, invulList, IM_ARRAYSIZE(invulList));
 	im::Combo("Counterhit", &as->counterType, counterList, IM_ARRAYSIZE(counterList)); 
-	im::Combo("Cancel normal", &as->cancelNormal, cancelList, IM_ARRAYSIZE(cancelList));
-	im::Combo("Cancel special", &as->cancelSpecial, cancelList, IM_ARRAYSIZE(cancelList));
+	im::Combo("Normal Cancel", &as->cancelNormal, cancelList, IM_ARRAYSIZE(cancelList));
+	im::Combo("Special Cancel", &as->cancelSpecial, cancelList, IM_ARRAYSIZE(cancelList));
 	
 
 	im::Separator();
 	flagIndex = -1;
-	BitField("Sine flags", &as->sineFlags, &flagIndex, 8);
+	BitField("Sine Flags", &as->sineFlags, &flagIndex, 8);
 	switch (flagIndex)
 	{
 		case 0: Tooltip("Use Y"); break;
@@ -180,37 +175,68 @@ inline void AsDisplay(Frame_AS *as)
 	im::InputInt4("Sinewave", as->sineParameters); im::SameLine();
 	im::TextDisabled("(?)");
 	if(im::IsItemHovered())
-		Tooltip("Sine parameters:\nX dist, Y dist\nX frequency, Y frequency");
+		Tooltip("Sine parameters:\nX Distance, Y Amplitude\nX Frequency, Y Frequency");
 	im::InputFloat2("Phases", as->sinePhases);
 }
 
 inline void AtDisplay(Frame_AT *at)
 {
 	const char* const hitEffectList[] = {
-		"Weak punch",
-		"Medium punch",
-		"Strong punch",
-		"Weak kick",
-		"Medium kick",
-		"Strong kick",
-		"Super punch",
-		"Super kick",
-		"Old cut (slash)",
-		"Burn",
-		"Freeze",
-		"Shock",
-		"Big flash (SE)",
-		"Small flash (SE)",
-		"None",
-		"Strong hit",
-		"Double slash",
-		"Super slash",
-		"Weak cut",
-		"Medium cut",
-		"Strong cut",
-		"Faint wave",
-		//Are there more is it OOB?
+		"Weak Punch",                    // 0
+		"Medium Punch",                  // 1
+		"Strong Punch",                  // 2
+		"Weak Kick",                     // 3
+		"Medium Kick",                   // 4
+		"Strong Kick",                   // 5
+		"Super Punch",                   // 6
+		"Super Kick",                    // 7
+		"Old Cut",                       // 8
+		"Burn",                          // 9
+		"Freeze",                        // 10
+		"Shock",                         // 11
+		"",                         	 // 12
+		"",                         	 // 13
+		"",                         	 // 14
+		"Medium Kick",                   // 15
+		"Double Cut",                    // 16
+		"Super Cut (Full Screen)",       // 17
+		"Weak Cut",                      // 18
+		"Medium Cut",                    // 19
+		"Strong Cut",                    // 20
+		"Feint Cut (Different SE)",      // 21
+		"Strong Cut?",                   // 22
+		"Weak Cut?",                     // 23
+		"Medium Cut?",                   // 24
+		"Byakuya Cut",                   // 25
+		"Medium Punch?",                 // 26
+		"Medium Punch?",                 // 27
+		"EX Punch Finisher",             // 28
+		"EX Kick Finisher",              // 29
+		"EX Cut Finisher",               // 30
+		"EX F.Cut Finisher",             // 31
+		"",                              // 32
+		"",                              // 33
+		"",                              // 34
+		"",                              // 35
+		"",                              // 36
+		"F.Cut Medium",                  // 37
+		"F.Cut Medium",                  // 38
+		"Heavy Punch",                   // 39
+		"Heavy Kick",                    // 40
+		"",                              // 41
+		"",                              // 42
+		"",                              // 43
+		"",                              // 44
+		"Small Punch",                   // 45
+		"Beeg Punch",                    // 46
+		"Strong Punch Center",           // 47
+		"Strong Punch Center",           // 48
+		"Strong Punch Center",           // 49
+		"Finisher Big Punch Radial/Center Hit", // 50
+		""                              // 51
+		// 52+ unlike other NULL values these don't even have sparks
 	};
+
 
 	const char* const addedEffectList[] = {
 		"None",
@@ -221,20 +247,22 @@ inline void AtDisplay(Frame_AT *at)
 	};
 
 	const char* const vectorFlags[] = {
-		"Default",
-		"Nullify",
-		"Reverse",
-		"Both"
+		"Normal",
+		"No X Movement",
+		"Reverse X Movement",
+		"Both(?)"
 	};
 
 	const char* const hitStopList[] = {
+		"Weakest",
 		"Weak",
-		"Medium",
-		"Strong",
+		"Medium (5F)",
 		"None",
-		"Stronger",
-		"Strongest",
-		"Weakest"
+		"Strong (10F)",
+		"Very Strong (20F)",
+		"",
+		"",
+		"Medium (Ogre?)"
 	};
 	
 	constexpr float width = 75.f;
@@ -243,14 +271,19 @@ inline void AtDisplay(Frame_AT *at)
 	BitField("Guard Flags", &at->guard_flags, &flagIndex);
 	switch (flagIndex)
 	{
-		case 0: Tooltip("Stand blockable"); break;
-		case 1: Tooltip("Air blockable"); break;
-		case 2: Tooltip("Crouch blockable"); break;
-		case 8: Tooltip("Miss if enemy is standing"); break;
-		case 9: Tooltip("Miss if enemy is airborne"); break;
-		case 10: Tooltip("Miss if enemy is crouching"); break;
-		case 11: Tooltip("Miss if enemy is in hitstun"); break;
-		case 12: Tooltip("Miss if enemy is in blockstun"); break;
+		case 0: Tooltip("Stand Blockable"); break;
+		case 1: Tooltip("Air Blockable"); break;
+		case 2: Tooltip("Crouch Blockable"); break;
+		
+		case 4: Tooltip("Always Stand-Shieldable"); break;
+		case 5: Tooltip("Always Air-Shieldable"); break;
+		case 6: Tooltip("Always Crouch-Shieldable"); break;
+		
+		case 8: Tooltip("Miss if enemy is Standing"); break;
+		case 9: Tooltip("Miss if enemy is Airborne"); break;
+		case 10: Tooltip("Miss if enemy is Crouching"); break;
+		case 11: Tooltip("Miss if enemy is in Hitstun"); break;
+		case 12: Tooltip("Miss if enemy is in Blockstun"); break;
 		case 13: Tooltip("Miss if OTG"); break;
 		case 14: Tooltip("Hit only in hitstun?"); break;
 		case 15: Tooltip("Can't hit playable character?"); break;
@@ -260,32 +293,24 @@ inline void AtDisplay(Frame_AT *at)
 	BitField("Hit Flags", &at->otherFlags, &flagIndex);
 	switch (flagIndex)
 	{
-		case 0: Tooltip("Enable chip damage"); break;
+		case 0: Tooltip("Deals Chip Damage"); break;
 		case 1: Tooltip("Can't KO"); break;
-		case 2: Tooltip("Make enemy unhittable"); break;
+		case 2: Tooltip("Make enemy Unhittable"); break;
 		case 3: Tooltip("Can't be clashed with"); break;
 		case 4: Tooltip("Auto super jump cancel"); break;
-		case 5: Tooltip("Don't increase combo counter"); break;
-		case 6: Tooltip("Shake the screen on hit"); break;
-		case 7: Tooltip("Not air techable"); break;
-		case 8: Tooltip("Not ground techable (HKD)"); break;
-		case 9: Tooltip("Friendly fire?"); break;
-		case 10: Tooltip("No self hitstop"); break;
+		case 5: Tooltip("Don't Increase Combo Hit Counter"); break;
+		case 6: Tooltip("Shake the Screen on Hit"); break;
+		case 7: Tooltip("Not Air Techable"); break;
+		case 8: Tooltip("Not Ground Techable (HKD)"); break;
 
-		case 12: Tooltip("Can't be bursted"); break;
-		case 13: Tooltip("Can't be shielded"); break;
-		case 14: Tooltip("Can't critical"); break;
+		case 10: Tooltip("No Self Hitstop"); break;
 		
 		case 16: Tooltip("Use custom blockstop"); break;
 		case 17: Tooltip("OTG Relaunches"); break;
-		case 18: Tooltip("Can't counterhit"); break;
-		case 19: Tooltip("Unknown 19"); break;
-		case 20: Tooltip("Unknown 20"); break;
-		case 21: Tooltip("Unknown 21"); break;
-		case 22: Tooltip("Unknown 22. Affects ATUH"); break;
+		case 18: Tooltip("Can't Counter-Hit"); break;
 
 		//Not in AACC.
-		case 25: Tooltip("No hitstop on multihit?"); break; 
+		case 25: Tooltip("No Hitstop on Multihit?"); break; 
 		case 29: Tooltip("Block enemy blast during Stun?"); break;
 	}
 
@@ -299,51 +324,51 @@ inline void AtDisplay(Frame_AT *at)
 		case 3: Tooltip("Ignore player invulnerability timer"); break;
 	}
 
-	im::InputInt("Blockstop", &at->blockStopTime, 0,0);
-
 	im::SetNextItemWidth(width);
-	im::InputInt("Preset hitstop", &at->hitStop, 0,0); im::SameLine();
-	//im::Combo("Hitstop", &at->hitStop, hitStopList, IM_ARRAYSIZE(hitStopList)); im::SameLine(0.f, 20);
-	im::SetNextItemWidth(width);
+	im::InputInt("Blockstop", &at->blockStopTime, 0,0); im::SameLine(0.f, 20); im::SetNextItemWidth(width);
 	im::InputInt("Custom##Hitstop", &at->hitStopTime, 0,0);
 
-	im::SetNextItemWidth(width);
-	im::InputInt("Set hitstun", &at->hitStun, 0,0);  im::SameLine(0.f, 20); im::SetNextItemWidth(width);
-	im::InputInt("Self hitstop", &at->addHitStun, 0,0);
+	im::SetNextItemWidth(width*1.2);
+	im::Combo("Preset Hitstop", &at->hitStop, hitStopList, IM_ARRAYSIZE(hitStopList)); im::SameLine();	im::SetNextItemWidth(width);
+	im::InputInt("ID", &at->hitStop, 0,0);
 
-	im::InputInt3("Hitstun decay", at->hitStunDecay);
+	im::SetNextItemWidth(width);
+	im::InputInt("Set Hitstun", &at->hitStun, 0,0);  im::SameLine(0.f, 20); im::SetNextItemWidth(width);
+	im::InputInt("Self Hitstop", &at->addHitStun, 0,0);
+
+	im::SetNextItemWidth(width*2);
+	im::InputInt2("Hitstun Decay", at->hitStunDecay); // Was set to 3 before but it's unused in UNI2 so let's see what happens
 	im::SameLine(); im::TextDisabled("(?)");
 	if(im::IsItemHovered())
-		Tooltip(R"_(1. Hit stun time reduction.
-2. Combopoint set if combo starter
-3. Combopoint SMP modifier (up to
-255, higher is more extreme effect))_");
-		
-	im::SetNextItemWidth(width);
-	im::InputInt("Untech time", &at->untechTime, 0,0);  im::SameLine(0.f, 20); im::SetNextItemWidth(width);
-	im::InputInt("Circuit break time", &at->breakTime, 0,0);
+		Tooltip("1. Set % of current hitstun scaling out of 100. The lower, the shorter scaling remaining.\n2. Combopoint set if combo starter. The higher, the stronger hitstun.");
+	im::SameLine();
+	im::SetNextItemWidth(width/2);
+	im::InputInt("Untech Time", &at->untechTime, 0,0);
+	// im::InputInt("Circuit break time", &at->breakTime, 0,0);
 
 
 	im::SetNextItemWidth(width);
-	im::InputFloat("Extra gravity", &at->extraGravity, 0,0); im::SameLine(0.f, 20); im::SetNextItemWidth(width);
-	im::InputInt("Correction %", &at->correction2, 0, 0);
-
+	// im::InputFloat("Extra gravity", &at->extraGravity, 0,0); im::SameLine(0.f, 20); im::SetNextItemWidth(width);
+	im::InputInt("Correction %", &at->correction2, 0, 0); im::SameLine();
 	im::SetNextItemWidth(width);
-	im::InputInt("Starter correction", &at->correction, 0, 0); im::SameLine(0.f, 20); im::SetNextItemWidth(width*2);
-	im::Combo("Type##Correction", &at->correction_type, "Normal\0Multiplicative\0Substractive\0");
+	im::InputInt("Starter Correction", &at->correction, 0, 0);
+	// im::Combo("Type##Correction", &at->correction_type, "Normal\0Multiplicative\0Substractive\0");
 
 	im::SetNextItemWidth(width);
 //	im::InputInt("VS damage", &at->red_damage, 0, 0); im::SameLine(0.f, 20); im::SetNextItemWidth(width);
 	im::InputInt("Damage", &at->damage, 0, 0); im::SameLine(0.f, 20); im::SetNextItemWidth(width);
 /* 
 	im::SetNextItemWidth(width);
-	im::InputInt("Guard damage", &at->guard_damage, 0, 0); im::SameLine(0.f, 20); im::SetNextItemWidth(width); */
-	im::InputInt("Meter gain", &at->meter_gain, 0, 0); im::SetNextItemWidth(width*2);
-	im::InputInt("Minimum damage %", &at->minDamage, 0, 0);
+	im::InputInt("Guard damage", &at->guard_damage, 0, 0); im::SameLine(0.f, 20); im::SetNextItemWidth(width);
+	im::InputInt("Meter gain", &at->meter_gain, 0, 0); im::SetNextItemWidth(width*2); */
+	im::InputInt("Minimum Damage %", &at->minDamage, 0, 0);
 
 	im::Separator();
 	auto comboWidth = (im::GetWindowWidth())/4.f;
 	im::InputInt3("Guard Vector", at->guardVector);
+	im::SameLine(); im::TextDisabled("(?)");
+	if(im::IsItemHovered())
+		Tooltip("What happens to the enemy when they block the attack.\nFor ground, air, and crouching.\nThese will typically be 15X, 17X, 16X.\nSee vectors documentation file.");
 	//im::InputInt3("GV flags", at->gVFlags);
 	for(int i = 0; i < 3; i++)
 	{	
@@ -360,7 +385,7 @@ inline void AtDisplay(Frame_AT *at)
 	//im::InputInt3("HV flags", at->hVFlags);
 	im::SameLine(); im::TextDisabled("(?)");
 	if(im::IsItemHovered())
-		Tooltip("Stand, air and crouch.\nSee vector text file.");
+		Tooltip("What happens to the enemy when they're hit.\nFor ground, air, and crouching.\nSee vectors documentation file.");
 	
 	for(int i = 0; i < 3; i++)
 	{	
@@ -374,16 +399,16 @@ inline void AtDisplay(Frame_AT *at)
 	im::Separator();
 	
 	im::SetNextItemWidth(150);
-	im::Combo("Hit effect", &at->hitEffect, hitEffectList, IM_ARRAYSIZE(hitEffectList)); im::SameLine(0, 20.f);
+	im::Combo("Hit Effect", &at->hitEffect, hitEffectList, IM_ARRAYSIZE(hitEffectList)); im::SameLine(0, 20.f);
 	im::SetNextItemWidth(70);
-	im::InputInt("ID##Hit effect", &at->hitEffect, 0, 0); 
+	im::InputInt("ID##Hit Effect", &at->hitEffect, 0, 0); 
 	
 	im::SetNextItemWidth(70);
-	im::InputInt("Sound effect", &at->soundEffect, 0, 0); im::SetNextItemWidth(120);
+	im::InputInt("Sound Effect", &at->soundEffect, 0, 0); im::SetNextItemWidth(120);
 
-	im::Combo("Added effect", &at->addedEffect, addedEffectList, IM_ARRAYSIZE(addedEffectList)); im::SameLine(0, 20.f);
+	im::Combo("Added Effect", &at->addedEffect, addedEffectList, IM_ARRAYSIZE(addedEffectList)); im::SameLine(0, 20.f);
 	im::SetNextItemWidth(70);
-	im::InputInt("ID##Added effect", &at->addedEffect, 0, 0);
+	im::InputInt("ID##Added Effect", &at->addedEffect, 0, 0);
 
 
 
@@ -396,14 +421,14 @@ inline void AfDisplay(Frame_AF *af, int &selectedLayer)
 		"Linear",
 		"Slow->Fast",
 		"Fast->Slow",
-		"Fast middle",
-		"Slow middle", //Never used, but it works.
+		"Fast Middle",
+		"Slow Middle", //Never used, but it works.
 	};
 
 	const char* const animationList[] = {
-		"Go to pattern",
-		"Next frame",
-		"Go to frame",
+		"Go to Pattern",
+		"Next Frame",
+		"Go to Frame",
 		"End"
 	};
 
@@ -491,4 +516,7 @@ inline void AfDisplay(Frame_AF *af, int &selectedLayer)
 
 	
 	im::Combo("Interpolation", &af->interpolationType, interpolationList, IM_ARRAYSIZE(interpolationList));
+	im::SameLine(); im::TextDisabled("(?)");
+	if(im::IsItemHovered())
+		Tooltip("How the current animation parameters transition to the next frame during this frame's duration.\nTry to look up interpolation examples online.");
 }

@@ -15,7 +15,7 @@
 #include <imgui_impl_win32.h>
 #include <windows.h>
 #include <shellapi.h>
-#include <minidumpapiset.h>
+// #include <minidumpapiset.h>
 
 #include <glad/glad.h>
 
@@ -38,25 +38,25 @@ bool init = false;
 
 MainFrame* mf = nullptr;
 
-typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE, DWORD, HANDLE, MINIDUMP_TYPE,
-	CONST PMINIDUMP_EXCEPTION_INFORMATION, CONST PMINIDUMP_USER_STREAM_INFORMATION, CONST PMINIDUMP_CALLBACK_INFORMATION);
-LONG WINAPI UnhandledException(_EXCEPTION_POINTERS* apExceptionInfo)
-{
-	HMODULE mhLib = ::LoadLibrary(L"dbghelp.dll");
-	MINIDUMPWRITEDUMP pDump = (MINIDUMPWRITEDUMP)::GetProcAddress(mhLib, "MiniDumpWriteDump");
+// typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE, DWORD, HANDLE, MINIDUMP_TYPE,
+	// CONST PMINIDUMP_EXCEPTION_INFORMATION, CONST PMINIDUMP_USER_STREAM_INFORMATION, CONST PMINIDUMP_CALLBACK_INFORMATION);
+// LONG WINAPI UnhandledException(_EXCEPTION_POINTERS* apExceptionInfo)
+// {
+	// HMODULE mhLib = ::LoadLibrary(L"dbghelp.dll");
+	// MINIDUMPWRITEDUMP pDump = (MINIDUMPWRITEDUMP)::GetProcAddress(mhLib, "MiniDumpWriteDump");
 
-	HANDLE  hFile = ::CreateFile(L"hanteichan.dmp", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
-						FILE_ATTRIBUTE_NORMAL, NULL);
+	// HANDLE  hFile = ::CreateFile(L"hanteichan.dmp", GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+						// FILE_ATTRIBUTE_NORMAL, NULL);
 
-	_MINIDUMP_EXCEPTION_INFORMATION ExInfo;
-	ExInfo.ThreadId = ::GetCurrentThreadId();
-	ExInfo.ExceptionPointers = apExceptionInfo;
-	ExInfo.ClientPointers = FALSE;
+	// _MINIDUMP_EXCEPTION_INFORMATION ExInfo;
+	// ExInfo.ThreadId = ::GetCurrentThreadId();
+	// ExInfo.ExceptionPointers = apExceptionInfo;
+	// ExInfo.ClientPointers = FALSE;
 
-	pDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL);
-	::CloseHandle(hFile);
-	return EXCEPTION_CONTINUE_SEARCH;
-}
+	// pDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, MiniDumpNormal, &ExInfo, NULL, NULL);
+	// ::CloseHandle(hFile);
+	// return EXCEPTION_CONTINUE_SEARCH;
+// }
 
 void LoadJapaneseFonts(ImGuiIO& io)
 {
@@ -94,7 +94,7 @@ bool LoopEvents()
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
-	SetUnhandledExceptionFilter(UnhandledException);
+	// SetUnhandledExceptionFilter(UnhandledException);
 #ifndef NDEBUG
 	std::ofstream cerrFile;
 	cerrFile.open("hanteichan.log");
@@ -153,7 +153,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	{
 		GetCurrentDirectoryA(MAX_PATH, dirLocation);
 		int appendAt = GetCurrentDirectoryA(512, iniLocation);
-		strcpy(iniLocation+appendAt, "\\hanteichan.ini");
+		strcpy(iniLocation+appendAt, "\\hanteichan24.ini");
 	}
 	
 	WNDCLASSEX wc = {
@@ -167,7 +167,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	};
 	
 	::RegisterClassEx(&wc);
-	HWND hwnd = ::CreateWindow(wc.lpszClassName, L"判定ちゃん v" HA6GUIVERSION, WS_OVERLAPPEDWINDOW,
+	HWND hwnd = ::CreateWindow(wc.lpszClassName, L"Hantei-chan v" HA6GUIVERSION, WS_OVERLAPPEDWINDOW, //titlebar
 		gSettings.posX, gSettings.posY, gSettings.winSizeX, gSettings.winSizeY, NULL, NULL, wc.hInstance, nullptr);
 	mainWindowHandle = hwnd;
 

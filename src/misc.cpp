@@ -1,6 +1,7 @@
 #include "misc.h"
 #include <windows.h>
 #include <string>
+#include <cstdint>
 
 bool screenShot = false;
 bool outputAnimElement = false;

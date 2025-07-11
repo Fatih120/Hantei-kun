@@ -1,8 +1,5 @@
 # Hantei-chan #
-Hantei-chan, a word play on hantei-kun (French Bread's own internal tool), is a .HA6 visual editor for French Bread games.
-MBAACC is only compatible with version 1. This program only for windows. 
-
-![screenshot](https://user-images.githubusercontent.com/39018575/119175726-311f4580-ba38-11eb-83dd-2d7d57c17f02.png)
+Hantei-chan is a .HA6 moveset editor. This fork focuses on editing Under Night In-Birth, adding much more clarity and pop-ups until source code of better forks (like tabs) is released.
 
 -----------------------
 ## Hotkeys and stuff ##
@@ -16,17 +13,15 @@ You can view the all the shortcuts by going into Help->Shortcuts
 
 -----------------------
 ## How to build ##
-Building is extremely simple, and it works with both MSVC and Mingw-w64.
+Building is DEBATABLY simple, and it works with both MSVC and Mingw-w64.
 Clone the git, init the submodules and run cmake.
 Assuming you're using ninja:
 
 ```
-git clone --recursive [insert repo link here] hanteichan
+git clone --recursive https://github.com/Fatih120/Hantei-chan.git hanteichan 
 cd hanteichan
 mkdir build
-cmake -S. -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release
+cmake -S. -Bbuild -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 cmake --build build
 build\hanteichan.exe
 ```
-
-And that's it!

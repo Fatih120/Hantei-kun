@@ -91,6 +91,12 @@ bool LoadFromIni(FrameData *framedata, CG *cg, Parts *parts, const std::string& 
 			std::string fullpath = folder + "\\" + ha6file;
 			if(!framedata->load(fullpath.c_str(), i))
 				return false;
+
+			char projectName[256]{};
+			GetPrivateProfileStringA("System", "ProjectName", nullptr, projectName, 256, iniPath.c_str());
+			
+			std::string palfile = folder + "\\" + projectName + ".pal";
+			cg->loadPalette(palfile.c_str());
 		}
 
 		int cgNum = GetPrivateProfileIntA("BmpcutFile", "FileNum", 0, iniPath.c_str());

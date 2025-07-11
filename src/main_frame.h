@@ -25,6 +25,8 @@ public:
 	bool HandleKeys(uint64_t vkey);
 
 	void RightClick(int x, int y);
+	void AdjustBoxes(int dx, int dy, int mode);
+
 	void LoadSettings();
 
 	bool drawImgui = true;
@@ -67,6 +69,7 @@ private:
 	void SetZoom(int level);
 	void LoadTheme(int i );
 	void WarmStyle();
+	void LeafStyle();
 	void ChangeClearColor(float r, float g, float b);
 
 	int mDeltaX = 0, mDeltaY = 0;

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <cassert>
+#include <cstring>
 
 #include <glm/gtc/matrix_transform.hpp>
 

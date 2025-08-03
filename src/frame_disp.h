@@ -4,6 +4,7 @@
 
 namespace im = ImGui;
 
+// Conditions
 inline void IfDisplay(std::vector<Frame_IF> *ifList_, Frame_IF* copied)
 {
 	std::vector<Frame_IF> & ifList = *ifList_;
@@ -42,45 +43,182 @@ inline void IfDisplay(std::vector<Frame_IF> *ifList_, Frame_IF* copied)
 		ifList.push_back({});
 }
 
+// Effects
+struct EfTypeList {
+    int value;
+    const char* label;
+};
+
+const EfTypeList EfTypeCases[] = {
+    { 1,   "Spawn Pattern" },
+    { 4,   "Set Enemy State" },
+    { 6,   "Modify Self" },
+    { 8,   "Spawn System Pattern" },
+    { 9,   "Play SFX" },
+    { 14,  "Set Enemy Throw State" },
+    { 101, "Spawn Pattern (Relative)" }
+};
+constexpr int EfTypeCasesCount = sizeof(EfTypeCases)/sizeof(EfTypeCases[0]);
+
+const char* const Eff6NoList[] = {
+    "Screen Shake",
+    "Translation",
+    "Announce End"
+};
+const int Eff6NoArr[] = { 1, 12, 255 };
+constexpr int Eff6NoSize = sizeof(Eff6NoArr)/sizeof(Eff6NoArr[0]);
+
 inline void EfDisplay(std::vector<Frame_EF> *efList_, Frame_EF* copied)
 {
-	std::vector<Frame_EF> & efList = *efList_;
-	constexpr float width = 50.f;
-	int deleteI = -1;
-	for( int i = 0; i < efList.size(); i++)
-	{
-		if(i>0)
-			im::Separator();
-		im::PushID(i); 
+    std::vector<Frame_EF> & efList = *efList_;
+    constexpr float width = 50.f;
+    int deleteI = -1;
+    for( int i = 0; i < efList.size(); i++)
+    {
+        if(i>0)
+            im::Separator();
+        im::PushID(i);
 
-		im::SetNextItemWidth(width); 
-		im::InputInt("Type", &efList[i].type, 0, 0); im::SameLine(0.f, 30);
-		im::SetNextItemWidth(width); 
-		im::InputInt("Number", &efList[i].number, 0, 0); im::SameLine(0.f, 30);
+        // type
+        int typeComboIndex = -1;
+        for(int j=0; j<EfTypeCasesCount; ++j)
+            if(efList[i].type == EfTypeCases[j].value) typeComboIndex = j;
 
-		im::SetNextItemWidth(width);
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1,0,0,0.4));
-		if(im::Button("Delete"))
-		{
-			deleteI = i;
-		}
-		ImGui::PopStyleColor();
+        im::SetNextItemWidth(width*2);
+        if(im::Combo("Type", &typeComboIndex, 
+                     [](void*, int idx, const char** out_text) {
+                         *out_text = EfTypeCases[idx].label;
+                         return true;
+                     }, nullptr, EfTypeCasesCount))
+        {
+            efList[i].type = EfTypeCases[typeComboIndex].value;
+        }
+        im::SameLine();
+        im::SetNextItemWidth(width);
+        im::InputInt(("ID##eftype" + std::to_string(i)).c_str(), &efList[i].type, 0, 0);
+        im::SameLine();
+        im::TextDisabled("(?)");
+        if(im::IsItemHovered())
+            Tooltip("Advanced effects that happen on the start of this frame.\nType is the possible effect, while Number is something like an argument.\nEach effect has different additional values and arguments. Hover over them for hints.");
+
+        // number
+        switch(efList[i].type)
+        {
+            case 4: // Set Enemy State
+            case 6: // Modify Self
+            {
+                int idx = 0;
+                for(int j=0; j<Eff6NoSize; ++j)
+                    if(efList[i].number == Eff6NoArr[j]) idx = j;
+
+                im::SetNextItemWidth(width*2.5);
+                if(im::Combo("Number", &idx, Eff6NoList, Eff6NoSize))
+                    efList[i].number = Eff6NoArr[idx];
+
+                im::SameLine(); im::SetNextItemWidth(width);
+                im::InputInt(("Pattern ID##efno" + std::to_string(i)).c_str(), &efList[i].number, 0, 0);
+                break;
+            }
+            case 8: // Spawn System Pattern
+            {
+                im::SetNextItemWidth(width*2);
+                im::InputInt(("Pattern ID##efno" + std::to_string(i)).c_str(), &efList[i].number, 0, 0);
+                break;
+            }
+            case 9: // Play SFX
+            default:
+            {
+                im::SetNextItemWidth(width*2);
+                im::Combo("Number", &efList[i].number, "", 0); im::SameLine(); im::SetNextItemWidth(width);
+                im::InputInt(("No.##efno" + std::to_string(i)).c_str(), &efList[i].number, 0, 0);
+                break;
+            }
+        }
+
+		bool tooltipped =
+			efList[i].type == 1 ||
+			efList[i].type == 4 ||
+			efList[i].type == 8 ||
+			efList[i].type == 14 ||
+			efList[i].type == 101 ||
+			(efList[i].type == 6 && efList[i].number == 12);
+			
 		
-		im::InputScalarN("##params", ImGuiDataType_S32, efList[i].parameters, 6, NULL, NULL, "%d", 0); im::SameLine();
+		if (tooltipped)
+		{
+			im::SetNextItemWidth(width);
+			im::InputScalar(("##0" + std::to_string(i)).c_str(), ImGuiDataType_S32, &efList[i].parameters[0], NULL, NULL, "%d", 0);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("X Offset");
+			
+			im::SameLine(); im::SetNextItemWidth(width);
+			im::InputScalar(("##1" + std::to_string(i)).c_str(), ImGuiDataType_S32, &efList[i].parameters[1], NULL, NULL, "%d", 0);
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("Y Offset");
+		}
+
+		// PARAM 2 3
+		if (efList[i].type == 1 || efList[i].type == 8 || efList[i].type == 101)
+		{
+			// A BIT
+			int flagIndexA = -1;
+			BitField("##2", reinterpret_cast<unsigned*>(&efList[i].parameters[2]), reinterpret_cast<unsigned*>(&flagIndexA), 8);
+			switch(flagIndexA)
+			{
+				case 0: Tooltip("Clear when hit / _ObjFlags_EraseParentDamage"); break;
+				case 2: Tooltip("Track parent position / _ObjFlags_ParentMove"); break;
+				case 3: Tooltip("Has hitstop"); break;
+				case 4: Tooltip("X/Y Anchors to middle of screen"); break;
+				case 5: Tooltip("Clear when parent pattern changes / _ObjFlags_EraseParentPatChange"); break;
+				case 6: Tooltip("Doesn't clip to floor / _ObjFlags_NoGround"); break;
+				case 7: Tooltip("X/Y Anchors to floor"); break;
+			}
+		
+			// B BIT
+			int flagIndexB = -1;
+			BitField("##3", reinterpret_cast<unsigned*>(&efList[i].parameters[3]), reinterpret_cast<unsigned*>(&flagIndexB), 10);	
+			switch(flagIndexB)
+			{
+				case 1: Tooltip("Track parent position"); break;
+				case 2: Tooltip("Clear when Thrown"); break;
+				case 6: Tooltip("Does not freeze on screen freezes / _ObjFlags_MoveTimeStop"); break;
+				case 7: Tooltip("Fixed position on screen / _ObjFlags_NoCamera"); break;
+				case 8: Tooltip("X/Y Anchors to enemy"); break;
+				case 9: Tooltip("X/Y middle of stage"); break;
+				case 10: Tooltip("X/Y middle of stage with P1 Muki"); break;
+			}
+		}
+		else { im::SetNextItemWidth(width*2); im::InputScalarN("##params23", ImGuiDataType_S32, efList[i].parameters+2, 2, NULL, NULL, "%d", 0); }
+
+		// PARAM 4 5
+		im::InputScalarN("##params45", ImGuiDataType_S32, efList[i].parameters+4, 2, NULL, NULL, "%d", 0);
+		
+		im::SameLine(); im::SetNextItemWidth(width);
 		if(im::Button("Copy"))
 		{
 			*copied = efList[i];
 		}
-		im::InputScalarN("##params2", ImGuiDataType_S32, efList[i].parameters+6, 6, NULL, NULL, "%d", 0);
+		
+		// PARAM 6+
+		im::InputScalarN("##params6p", ImGuiDataType_S32, efList[i].parameters+6, 6, NULL, NULL, "%d", 0);
+		
+        im::SameLine(); im::SetNextItemWidth(width);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1,0,0,0.4));
+        if(im::Button("Delete"))
+        {
+            deleteI = i;
+        }
+        ImGui::PopStyleColor();
 
-		im::PopID();
-	};
+        im::PopID();
+    };
 
-	if(deleteI >= 0)
-		efList.erase(efList.begin() + deleteI);
-	
-	if(im::Button("Add"))
-		efList.push_back({});
+    if(deleteI >= 0)
+        efList.erase(efList.begin() + deleteI);
+
+    im::Separator();
+    if(im::Button("Add"))
+        efList.push_back({});
 }
 
 inline void AsDisplay(Frame_AS *as)

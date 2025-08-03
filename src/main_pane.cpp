@@ -159,11 +159,22 @@ void MainPane::Draw()
 					if(im::Button("Copy AF")){
 						currState.copied->af = frame.AF;
 					}
-
 					im::SameLine(0,20.f); 
 					if(im::Button("Paste AF")){
 						frame.AF = currState.copied->af;
 					}
+					
+				    if (im::Button("Copy AF Layer")){
+						if (frame.AF.layers.size() > currState.selectedLayer)
+						{
+							currState.af_layer = frame.AF.layers[currState.selectedLayer];
+						}
+					}
+					im::SameLine(0,20.f);
+					if (im::Button("Paste AF Layer") && frame.AF.layers.size() > currState.selectedLayer) {
+						frame.AF.layers[currState.selectedLayer] = currState.af_layer;
+					}
+
 					im::TreePop();
 					im::Separator();
 				}

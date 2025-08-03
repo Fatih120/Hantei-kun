@@ -13,10 +13,11 @@ struct FrameState
 	bool animating = 0;
 	int animeSeq = 0;
 	int selectedLayer = 0;
+	Layer af_layer;
 
 	FrameState();
 	~FrameState();
-
+	
 	struct CopyData{
 		Frame_AS as{};
 		Frame_AF_T<LinearAllocator> af{};

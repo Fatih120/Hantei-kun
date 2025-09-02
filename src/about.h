@@ -26,9 +26,9 @@ public:
 			ImGui::SetNextWindowSize(ImVec2{400,200});
 			ImGui::Begin("About", &isVisible, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0,0,0,1));
-			ImGui::Text("Hantei-chan v" HA6GUIVERSION);
+			ImGui::Text("Hantei-kun v" HA6GUIVERSION);
 			ImGui::Separator();
-			ImGui::Text("Made by omanko.\nForked and updated by several contributors.\nThis fork can be found at github.com/Fatih120/Hantei-chan");
+			ImGui::Text("Made by omanko.\nForked and updated by several contributors.\nThis fork can be found at github.com/Fatih120/Hantei-kun");
 			ImGui::Spacing();
 			ImGui::Text("Special thanks to:\nEiton for the effect rendering code\nu4ick and Rhekar for advice and reporting bugs.");
 			ImGui::Separator();
@@ -65,6 +65,7 @@ public:
 				"L", "Toggle axis",
 				"H", "Toggle hitboxes",
 				"F", "Hide user interface",
+				"Mouse Wheel", "Adjust Zoom",
 				"-","-",
 				"Right click & drag", "Draw box",
 				"Left click & drag", "Pan view",

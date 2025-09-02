@@ -154,6 +154,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 		GetCurrentDirectoryA(MAX_PATH, dirLocation);
 		int appendAt = GetCurrentDirectoryA(512, iniLocation);
 		strcpy(iniLocation+appendAt, "\\hanteichan24.ini");
+		strcpy(iniLocation+appendAt, "\\hantei-kun.ini");
 	}
 	
 	WNDCLASSEX wc = {
@@ -167,7 +168,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	};
 	
 	::RegisterClassEx(&wc);
-	HWND hwnd = ::CreateWindow(wc.lpszClassName, L"Hantei-chan v" HA6GUIVERSION, WS_OVERLAPPEDWINDOW, //titlebar
+	HWND hwnd = ::CreateWindow(wc.lpszClassName, L"Hantei-kun v" HA6GUIVERSION, WS_OVERLAPPEDWINDOW, //titlebar
 		gSettings.posX, gSettings.posY, gSettings.winSizeX, gSettings.winSizeY, NULL, NULL, wc.hInstance, nullptr);
 	mainWindowHandle = hwnd;
 

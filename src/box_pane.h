@@ -15,6 +15,8 @@ public:
 	void BoxDrag(int x, int y);
 
 	void AdvanceBox(int dir);
+	
+	bool isHovered = false;
 
 public:
     int GetCurrentBox() const { return currentBox; }

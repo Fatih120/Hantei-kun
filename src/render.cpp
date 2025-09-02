@@ -153,6 +153,10 @@ void Render::SetScale(float newScale)
 	/* if(curPat)
 		scale *= 0.5f; */
 }
+float Render::GetScale() const
+{
+    return iScale;
+}
 
 constexpr float tau = glm::pi<float>()*2.f;
 void Render::Draw()

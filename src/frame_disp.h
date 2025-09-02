@@ -269,6 +269,9 @@ inline void AsDisplay(Frame_AS *as)
 	im::InputInt("Max X speed", &as->maxSpeedX, 0, 0);
 	im::SetNextItemWidth(width*2);
 	im::InputInt2("Accel", as->accel);
+	im::SameLine(); im::TextDisabled("(?)");
+	if(im::IsItemHovered())
+		Tooltip("X, Y\nX, Y\nNote that a negative Y goes up and a positive Y goes down.");
 	
 	im::Separator();
 	flagIndex = -1;
@@ -375,7 +378,6 @@ inline void AtDisplay(Frame_AT *at)
 		// 52+ unlike other NULL values these don't even have sparks
 	};
 
-
 	const char* const addedEffectList[] = {
 		"None",
 		"Burn",
@@ -443,7 +445,7 @@ inline void AtDisplay(Frame_AT *at)
 
 		case 10: Tooltip("No Self Hitstop"); break;
 		
-		case 16: Tooltip("Use custom blockstop"); break;
+		case 16: Tooltip("Use Custom Blockstop"); break;
 		case 17: Tooltip("OTG Relaunches"); break;
 		case 18: Tooltip("Can't Counter-Hit"); break;
 
@@ -457,9 +459,9 @@ inline void AtDisplay(Frame_AT *at)
 	switch (flagIndex)
 	{
 		case 0: Tooltip("Enabled"); break;
-		case 1: Tooltip("Target collision"); break;
-		case 2: Tooltip("Target origin"); break;
-		case 3: Tooltip("Ignore player invulnerability timer"); break;
+		case 1: Tooltip("Target Collision"); break;
+		case 2: Tooltip("Target Origin Point"); break;
+		case 3: Tooltip("Ignore Player Invulnerability Timer"); break;
 	}
 
 	im::SetNextItemWidth(width);

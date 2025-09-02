@@ -71,7 +71,8 @@ public:
 	void DontDraw();
 	void SetImageColor(float *rgbaArr);
 	void SetScale(float scale);
-
+    float GetScale() const;
+	
 	enum blendType{
 		normal,
 		additive,

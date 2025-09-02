@@ -23,6 +23,8 @@ private:
 	int ranges[2]{};
 	
 	int afjcRangeVal = 0;
+	int yoffRange = 0;
+	int xoffRange = 0;
 
 	struct SequenceWId{
 		int id;

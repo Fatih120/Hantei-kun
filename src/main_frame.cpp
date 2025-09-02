@@ -217,6 +217,7 @@ void MainFrame::DrawUi()
 	helpWindow.Draw();
 
 	RenderUpdate();
+	UpdateZoom();
 }
 
 void MainFrame::RenderUpdate()
@@ -535,7 +536,7 @@ void MainFrame::ChangeClearColor(float r, float g, float b)
 	clearColor[2] = b;
 }
 
-void MainFrame::SetZoom(int level)
+void MainFrame::SetZoom(int level) //probably dont need this
 {
 	zoom_idx = level;
 	switch (level)
@@ -548,6 +549,26 @@ void MainFrame::SetZoom(int level)
 	case 5: render.SetScale(4.f); break;
 	}
 }
+
+void MainFrame::UpdateZoom()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    float mouseWheel = io.MouseWheel;
+    if (mouseWheel != 0.0f && boxPane.isHovered)
+    {
+        constexpr float minZoom = 0.25f;
+        constexpr float maxZoom = 5.0f;
+        constexpr float zoomMult = 1.2f;
+        float currentScale = render.GetScale();
+        if (mouseWheel > 0)
+            currentScale *= zoomMult;
+        else
+            currentScale /= zoomMult;
+        currentScale = std::clamp(currentScale, minZoom, maxZoom);
+        render.SetScale(currentScale);
+    }
+}
+
 
 void MainFrame::LoadTheme(int i )
 {
@@ -639,7 +660,7 @@ void MainFrame::Menu(unsigned int errorPopupId)
 					}
 					else
 						mainPane.RegenerateNames();
-					currentFilePath.clear();
+						currentFilePath.clear();
 				}
 			}
 
@@ -767,9 +788,27 @@ void MainFrame::Menu(unsigned int errorPopupId)
 					}
 				}
 			}
-			if (ImGui::BeginMenu("Scale all layers")){
-				ImGui::InputFloat("Factor", &reScaleFactor);
+			if (ImGui::BeginMenu("Mass-Resize Tool")){
+				ImGui::Text("SETS the scale of every layer of every pattern.");
+				ImGui::InputFloat("Set Scale", &setScaleFactor);
 				if (ImGui::Button("Apply", ImVec2(120, 0)))
+				{
+					for(auto &seq : framedata.m_sequences)
+					{
+						for(auto &frame : seq.frames)
+						{
+							for(auto &layer : frame.AF.layers)
+							{
+									layer.scale[0] = setScaleFactor;
+									layer.scale[1] = setScaleFactor;
+							}
+						}
+					}
+				}
+				ImGui::Separator();
+				ImGui::Text("MULITIPLES the scale of every frame's current scale.");
+				ImGui::InputFloat("Multiply Scale", &reScaleFactor);
+				if (ImGui::Button("Multiply all Layers", ImVec2(150, 0)))
 				{
 					for(auto &seq : framedata.m_sequences)
 					{
@@ -780,11 +819,46 @@ void MainFrame::Menu(unsigned int errorPopupId)
 									layer.scale[0] *= reScaleFactor;
 									layer.scale[1] *= reScaleFactor;
 							}
+						}
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Mulitply all Box Sizes", ImVec2(150, 0)))
+				{
+					for(auto &seq : framedata.m_sequences)
+					{
+						for(auto &frame : seq.frames)
+						{
 							for (auto &[k,v] : frame.hitboxes)
 							{
 								for(int jii = 0; jii < 4; ++jii)
 									v.xy[jii] *= reScaleFactor;
 							}
+						}
+					}
+				}
+				if (ImGui::Button("Set Only for This Pattern", ImVec2(200, 0)))
+				{
+					auto *seq = framedata.get_sequence(currState.pattern);
+					for (auto &frame : seq->frames)
+					{
+						for (auto &layer : frame.AF.layers)
+						{
+							layer.scale[0] = setScaleFactor;
+							layer.scale[1] = setScaleFactor;
+						}
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Multiply Only for This Pattern", ImVec2(200, 0)))
+				{
+					auto *seq = framedata.get_sequence(currState.pattern);
+					for (auto &frame : seq->frames)
+					{
+						for (auto &layer : frame.AF.layers)
+						{
+							layer.scale[0] *= reScaleFactor;
+							layer.scale[1] *= reScaleFactor;
 						}
 					}
 				}

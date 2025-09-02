@@ -46,6 +46,7 @@ private:
 	CG cg;
 	Parts parts;
 	int curPalette;
+	float setScaleFactor = 1.0;
 	float reScaleFactor = 1.0;
 
 	//Animation
@@ -67,6 +68,7 @@ private:
 	void ChangeOffset(int x, int y);
 
 	void SetZoom(int level);
+	void UpdateZoom();
 	void LoadTheme(int i );
 	void WarmStyle();
 	void LeafStyle();

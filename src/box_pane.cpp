@@ -13,17 +13,17 @@ currentBox(0), highlight(false)
 		if(i==0)
 			boxNameList[i] = "Collision box";
 		else if (i >= 1 && i <= 8)
-			boxNameList[i] = "Hurtbox " + std::to_string(i);
+			boxNameList[i] = "Hurtbox " + std::to_string(i-1);
 		else if(i >=9 && i <= 10)
-			boxNameList[i] = "Special box " + std::to_string(i-8);
+			boxNameList[i] = "Special box " + std::to_string(i-9);
 		else if(i == 11)
 			boxNameList[i] = "Clash box";
 		else if(i == 12)
 			boxNameList[i] = "Projectile box";
 		else if(i>12 && i<=24)
-			boxNameList[i] = "Special box " + std::to_string(i-8);
+			boxNameList[i] = "Special box " + std::to_string(i-9);
 		else
-			boxNameList[i] = "Attack box " + std::to_string(i-24);
+			boxNameList[i] = "Attack box " + std::to_string(i-25);
 	}
 
 	currState.copied->box = {};
@@ -69,8 +69,8 @@ void BoxPane::Draw()
 {
 	namespace im = ImGui;
 	im::Begin("Box Pane",0);
-
-
+    isHovered = im::IsWindowHovered();
+	
 	if(frameData->get_sequence(currState.pattern) && frameData->get_sequence(currState.pattern)->frames.size() > 0)
 	{
 		auto &frames = frameData->get_sequence(currState.pattern)->frames;

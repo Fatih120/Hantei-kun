@@ -231,21 +231,12 @@ void MainPane::Draw()
 						}
 					}
 
-					im::SameLine(0,20.f);
-					if(im::Button("Range tool"))
-					{
-						afjcRangeVal = 0;
-						ranges[0] = 0;
-						ranges[1] = 0;
-						rangeWindow = !rangeWindow;
-					}
-
-					if(im::Button("Copy frame"))
+					if(im::Button("Copy Frame"))
 					{
 						currState.copied->frame = frame;
 					}
 					im::SameLine(0,20.f);
-					if(im::Button("Paste frame"))
+					if(im::Button("Paste Prame"))
 					{
 						frame = currState.copied->frame;
 					}
@@ -257,13 +248,119 @@ void MainPane::Draw()
 						if(currState.frame >= seq->frames.size())
 							currState.frame--;
 					}
+					ImGui::PopStyleColor();
+					
+					im::Separator();
+					ImGui::Text("Range Tools");
+					auto seq = frameData->get_sequence(currState.pattern);
+					if(ranges[0] < 0)
+						ranges[0] = 0;
+					if(ranges[1] < 0)
+						ranges[1] = 0;
+					if(ranges[0] > ranges[1])
+						ranges[0] = ranges[1];
+					if(ranges[0] + ranges[1] == 0)
+						ranges[1] = seq->frames.size()-1;
+			
+					im::SetNextItemWidth(100);
+					im::InputInt2("Frame Range (Inclusive)", ranges);
+					if(im::Button("Set Landing Frame"))
+					{
+						for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+							seq->frames[i].AF.landJump = afjcRangeVal;
+					}
+					im::SameLine(); im::SetNextItemWidth(100);
+					im::InputInt("Value##AFJC", &afjcRangeVal);
+			
+					if(im::Button("Copy Frames"))
+					{
+						currState.copied->frames.clear();
+						for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+							currState.copied->frames.push_back(seq->frames[i]);
+					}
+					im::SameLine();
+					if(im::Button("Paste Frames Before End Range"))
+					{
+						if(!currState.copied->frames.empty())
+						{
+							int pos = ranges[1];
+							if(pos > seq->frames.size())
+								pos = seq->frames.size();
+							seq->frames.insert(seq->frames.begin()+pos, currState.copied->frames.begin(), currState.copied->frames.end());
+						}
+					}
+					if(im::Button("Paste Transform (Current Layer)"))
+					{
+						for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+						{
+							if(seq->frames[i].AF.layers.size() > currState.selectedLayer)
+							{
+								seq->frames[i].AF.layers[currState.selectedLayer].offset_x = seq->frames[currState.frame].AF.layers[currState.selectedLayer].offset_x;
+								seq->frames[i].AF.layers[currState.selectedLayer].offset_y = seq->frames[currState.frame].AF.layers[currState.selectedLayer].offset_y;
+			
+								memcpy(seq->frames[i].AF.layers[currState.selectedLayer].scale, seq->frames[currState.frame].AF.layers[currState.selectedLayer].scale, sizeof(float)*2);
+								memcpy(seq->frames[i].AF.layers[currState.selectedLayer].rotation, seq->frames[currState.frame].AF.layers[currState.selectedLayer].rotation, sizeof(float)*2);
+							}
+						}
+					}
+					if(im::Button("Set Z-Priority"))
+					{
+						for (int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+						{
+							auto &layers = seq->frames[i].AF.layers;
+							for (size_t layerIndex = 0; layerIndex < layers.size(); ++layerIndex) {
+								layers[layerIndex].priority = 10;
+							}
+						}
+					}
+					im::SameLine();
+					if(im::Button("Paste Color"))
+					{
+						auto &iLayer = seq->frames[currState.frame].AF.layers[currState.selectedLayer];
+						for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+						{
+							for(auto &oLayer : seq->frames[i].AF.layers)
+							{
+								memcpy(oLayer.rgba, iLayer.rgba, sizeof(float)*4);
+								oLayer.blend_mode = iLayer.blend_mode;
+							}
+						}
+					}
+					if(im::Button("Set X"))
+					{
+						auto &iLayer = seq->frames[currState.frame].AF.layers[currState.selectedLayer];
+						for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+						{
+							for(auto &oLayer : seq->frames[i].AF.layers)
+							{
+								oLayer.offset_x = xoffRange;
+							}
+						}
+					}
+					im::SameLine();
+					im::SetNextItemWidth(100);
+					im::InputInt("##X", &xoffRange);
+					
+					im::SameLine();
+					if(im::Button("Set Y"))
+					{
+						auto &iLayer = seq->frames[currState.frame].AF.layers[currState.selectedLayer];
+						for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
+						{
+							for(auto &oLayer : seq->frames[i].AF.layers)
+							{
+								oLayer.offset_y = yoffRange;
+							}
+						}
+					}
+					im::SameLine();
+					im::SetNextItemWidth(100);
+					im::InputInt("##Y", &yoffRange);
 					
 					im::TreePop();
 					im::Separator();
 				}
 			}
-			else
-				rangeWindow = false;
 			im::EndChild();
 		}
 	}
@@ -271,114 +368,6 @@ void MainPane::Draw()
 		im::Text("Load some data first.");
 
 	im::End();
-
-	if(rangeWindow)
-	{
-		auto seq = frameData->get_sequence(currState.pattern);
-		if(ranges[0] < 0)
-			ranges[0] = 0;
-		if(ranges[1] < 0)
-			ranges[1] = 0;
-		if(ranges[0] > ranges[1])
-			ranges[0] = ranges[1];
-		if(ranges[0] + ranges[1] == 0)
-			ranges[1] = seq->frames.size()-1;
-
-		im::SetNextWindowSize(ImVec2{400,120}, ImGuiCond_FirstUseEver);
-		im::Begin("Range paste", &rangeWindow);
-		im::InputInt2("Range of frames", ranges);
-		if(im::Button("Paste color"))
-		{
-			auto &iLayer = seq->frames[currState.frame].AF.layers[currState.selectedLayer];
-			for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-			{
-				for(auto &oLayer : seq->frames[i].AF.layers)
-				{
-					memcpy(oLayer.rgba, iLayer.rgba, sizeof(float)*4);
-					oLayer.blend_mode = iLayer.blend_mode;
-				}
-			}
-		}
-		if(im::Button("Set Landing Frame"))
-		{
-			for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-				seq->frames[i].AF.landJump = afjcRangeVal;
-		}
-		im::SameLine(); im::SetNextItemWidth(100);
-		im::InputInt("Value##AFJC", &afjcRangeVal);
-
-		if(im::Button("Copy Frames"))
-		{
-			currState.copied->frames.clear();
-			for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-				currState.copied->frames.push_back(seq->frames[i]);
-		}
-		im::SameLine();
-		if(im::Button("Paste Frames Before End Range"))
-		{
-			if(!currState.copied->frames.empty())
-			{
-				int pos = ranges[1];
-				if(pos > seq->frames.size())
-					pos = seq->frames.size();
-				seq->frames.insert(seq->frames.begin()+pos, currState.copied->frames.begin(), currState.copied->frames.end());
-			}
-		}
-		if(im::Button("Paste transform (Current layer only)"))
-		{
-			for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-			{
-				if(seq->frames[i].AF.layers.size() > currState.selectedLayer)
-				{
-					seq->frames[i].AF.layers[currState.selectedLayer].offset_x = seq->frames[currState.frame].AF.layers[currState.selectedLayer].offset_x;
-					seq->frames[i].AF.layers[currState.selectedLayer].offset_y = seq->frames[currState.frame].AF.layers[currState.selectedLayer].offset_y;
-
-					memcpy(seq->frames[i].AF.layers[currState.selectedLayer].scale, seq->frames[currState.frame].AF.layers[currState.selectedLayer].scale, sizeof(float)*2);
-					memcpy(seq->frames[i].AF.layers[currState.selectedLayer].rotation, seq->frames[currState.frame].AF.layers[currState.selectedLayer].rotation, sizeof(float)*2);
-				}
-			}
-		}
-		if(im::Button("Set Z-Priority"))
-		{
-			for (int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-			{
-				auto &layers = seq->frames[i].AF.layers;
-				for (size_t layerIndex = 0; layerIndex < layers.size(); ++layerIndex) {
-					layers[layerIndex].priority = 10;
-				}
-			}
-		}
-		if(im::Button("Set X"))
-		{
-			auto &iLayer = seq->frames[currState.frame].AF.layers[currState.selectedLayer];
-			for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-			{
-				for(auto &oLayer : seq->frames[i].AF.layers)
-				{
-					oLayer.offset_x = xoffRange;
-				}
-			}
-		}
-		im::SameLine();
-		im::SetNextItemWidth(100);
-		im::InputInt("##X", &xoffRange);
-		
-		im::SameLine();
-		if(im::Button("Set Y"))
-		{
-			auto &iLayer = seq->frames[currState.frame].AF.layers[currState.selectedLayer];
-			for(int i = ranges[0]; i <= ranges[1] && i >= 0 && i < seq->frames.size(); i++)
-			{
-				for(auto &oLayer : seq->frames[i].AF.layers)
-				{
-					oLayer.offset_y = yoffRange;
-				}
-			}
-		}
-		im::SameLine();
-		im::SetNextItemWidth(100);
-		im::InputInt("##Y", &yoffRange);
-		im::End();
 	}
 }
 

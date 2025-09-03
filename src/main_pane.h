@@ -19,7 +19,6 @@ private:
 	bool copyThisFrame = true;
 	std::string *decoratedNames;
 
-	bool rangeWindow = false;
 	int ranges[2]{};
 	
 	int afjcRangeVal = 0;

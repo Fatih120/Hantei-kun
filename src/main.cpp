@@ -153,7 +153,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	{
 		GetCurrentDirectoryA(MAX_PATH, dirLocation);
 		int appendAt = GetCurrentDirectoryA(512, iniLocation);
-		strcpy(iniLocation+appendAt, "\\hanteichan24.ini");
 		strcpy(iniLocation+appendAt, "\\hantei-kun.ini");
 	}
 	

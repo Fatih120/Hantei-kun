@@ -368,7 +368,6 @@ void MainPane::Draw()
 		im::Text("Load some data first.");
 
 	im::End();
-	}
 }
 
 void MainPane::PopCopies()
